@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CropCare AI - Smart Crop Disease Helper. A modern 3D educational front-end prototype for crop disease awareness and leaf health exploration.">
+  <meta name="theme-color" content="#1b4332">
+  <title>CropCare AI — Smart Crop Disease Helper | 3D Plant Health Awareness</title>
+
+  <!-- Typography: Manrope & DM Sans with system fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Three.js 3D Engine & OrbitControls (Local for offline reliability) -->
+  <script src="js/three.min.js"></script>
+  <script src="js/OrbitControls.js"></script>
+</head>
+<body>
+  <!-- Accessible Skip to Content Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- =========================================================================
+       6.1 Navigation Bar
+       ========================================================================= -->
+  <header class="site-header" id="navbar">
+    <div class="nav-container">
+      <a href="#home" class="brand-logo" aria-label="CropCare AI Home">
+        <div class="brand-icon-wrapper">
+          <!-- 3D Botanical Leaf SVG Logo -->
+          <svg class="brand-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="20" r="18" fill="url(#brandGradient)" opacity="0.15" />
+            <path d="M20 6C14 13 10 20 12 28C14 36 24 35 28 29C32 23 29 14 20 6Z" fill="url(#leafGradient)" />
+            <path d="M19 12V32M19 18L25 14M19 23L14 20M19 27L24 25" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="brandGradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#52b788"/>
+                <stop offset="1" stop-color="#1b4332"/>
+              </linearGradient>
+              <linearGradient id="leafGradient" x1="12" y1="6" x2="28" y2="34" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#74c69d"/>
+                <stop offset="0.5" stop-color="#40916c"/>
+                <stop offset="1" stop-color="#1b4332"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="pulse-indicator" title="System Active"></span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">CropCare <span class="brand-accent">AI</span></span>
+          <span class="brand-subtitle">Smart Crop Helper</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#analyzer" class="nav-link">Leaf Analyzer</a></li>
+          <li><a href="#guide" class="nav-link">Disease Guide</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="#analyzer" class="btn btn-primary btn-nav-cta">
+          <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span>Get Started</span>
+        </a>
+        <!-- Mobile Menu Toggle Button -->
+        <button type="button" class="mobile-toggle" id="mobile-toggle" aria-expanded="false" aria-controls="mobile-drawer" aria-label="Toggle navigation menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <ul class="mobile-nav-menu">
+        <li><a href="#home" class="mobile-nav-link">Home</a></li>
+        <li><a href="#analyzer" class="mobile-nav-link">Leaf Analyzer</a></li>
+        <li><a href="#guide" class="mobile-nav-link">Disease Guide</a></li>
+        <li><a href="#about" class="mobile-nav-link">About Project</a></li>
+        <li>
+          <a href="#analyzer" class="btn btn-primary btn-block mobile-drawer-cta">
+            <span>Analyze a Leaf</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- =========================================================================
+         6.2 Home Section (Hero with 3D Interactive Plant/Leaf Viewport)
+         ========================================================================= -->
+    <section class="hero-section" id="home">
+      <div class="hero-backdrop" aria-hidden="true">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="hero-grid-pattern"></div>
+      </div>
+
+      <div class="container hero-container">
+        <!-- Hero Text Column -->
+        <div class="hero-content">
+          <div class="badge hero-badge">
+            <span class="badge-dot"></span>
+            <span>College Project Prototype • Version 1.0</span>
+          </div>
+
+          <h1 class="hero-title">
+            Healthier Crops. <br>
+            <span class="highlight-text">Smarter Farming.</span>
+          </h1>
+
+          <p class="hero-description">
+            CropCare AI is a modern, responsive crop health awareness platform designed to help farmers, agriculture students, and gardening enthusiasts explore plant health, examine leaf symptoms, and discover verified disease prevention practices.
+          </p>
+
+          <div class="student-notice-box" role="note">
+            <div class="notice-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="notice-text">
+              <strong>Student Prototype Note:</strong> Version 1.0 is a front-end educational demonstration with image inspection workflows. Real AI/ML classification is scheduled for Version 2.0.
+            </div>
+          </div>
+
+          <div class="hero-cta-group">
+            <a href="#analyzer" class="btn btn-primary btn-lg">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              <span>Analyze a Leaf</span>
+            </a>
+            <a href="#guide" class="btn btn-secondary btn-lg">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+              <span>Disease Guide</span>
+            </a>
+          </div>
+
+          <!-- Quick Metrics -->
+          <div class="hero-metrics">
+            <div class="metric-card">
+              <span class="metric-value">5+</span>
+              <span class="metric-label">Disease Profiles</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-card">
+              <span class="metric-value">3D</span>
+              <span class="metric-label">Interactive Model</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-card">
+              <span class="metric-value">100%</span>
+              <span class="metric-label">Browser Privacy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero 3D Interactive Plant/Leaf Column -->
+        <div class="hero-visual">
+          <div class="card-3d hero-3d-card" id="hero-3d-wrapper">
+            <!-- 3D Header Toolbar -->
+            <div class="hero-3d-toolbar">
+              <div class="model-status">
+                <span class="status-indicator live"></span>
+                <span class="model-title">3D Botanical Bio-Visualizer</span>
+              </div>
+              <div class="model-mode-buttons" role="group" aria-label="3D View Modes">
+                <button type="button" class="mode-btn active" data-mode="organic" title="Realistic organic foliage">
+                  🌿 <span>Organic</span>
+                </button>
+                <button type="button" class="mode-btn" data-mode="scanner" title="Holographic wireframe scanner">
+                  🔬 <span>Bio-Scan</span>
+                </button>
+                <button type="button" class="mode-btn" data-mode="symptoms" title="Simulated lesion markers">
+                  ⚠️ <span>Symptoms</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Three.js Canvas Container -->
+            <div class="canvas-viewport" id="hero-canvas-container" tabindex="0" role="region" aria-label="Interactive 3D Leaf Model. Click and drag to rotate, scroll to zoom.">
+              <!-- Loading Spinner -->
+              <div class="canvas-loader" id="canvas-loader" aria-hidden="true">
+                <div class="spinner"></div>
+                <span>Initializing 3D Plant Model...</span>
+              </div>
+
+              <!-- Interactive Controls Overlay Guidance -->
+              <div class="viewport-hints">
+                <span class="hint-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  Drag to rotate • Scroll to zoom
+                </span>
+                <button type="button" class="reset-camera-btn" id="reset-cam-btn" title="Reset Camera View">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            <!-- Floating 3D Telemetry Badges -->
+            <div class="telemetry-badge telemetry-top">
+              <div class="telemetry-icon">🌱</div>
+              <div class="telemetry-info">
+                <span class="telemetry-name">Cellular Turgor</span>
+                <span class="telemetry-val">Optimal (98.4%)</span>
+              </div>
+            </div>
+
+            <div class="telemetry-badge telemetry-bottom">
+              <div class="telemetry-icon">📐</div>
+              <div class="telemetry-info">
+                <span class="telemetry-name">Vein Architecture</span>
+                <span class="telemetry-val">Reticulate Venation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6.3 Leaf Image Analyzer Section
+         ========================================================================= -->
+    <section class="section analyzer-section" id="analyzer">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="section-header text-center">
+          <div class="badge section-badge">Interactive Tool</div>
+          <h2 class="section-title">Leaf Image Analyzer</h2>
+          <p class="section-subtitle">
+            Upload a local leaf photograph to inspect visual patterns, preview high-resolution details, and review educational plant disease guides.
+          </p>
+        </div>
+
+        <!-- Analyzer Grid Layout -->
+        <div class="analyzer-grid">
+          <!-- Left Column: Upload Controls & File Selection -->
+          <div class="card-3d analyzer-control-card">
+            <h3 class="card-heading">
+              <span class="step-num">1</span>
+              <span>Select or Drop Leaf Photograph</span>
+            </h3>
+
+            <!-- Drag & Drop Zone -->
+            <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Drop crop leaf image here or press to browse files">
+              <input type="file" id="leaf-file-input" class="file-input" accept="image/jpeg,image/png,image/webp" aria-describedby="file-requirements">
+              
+              <div class="dropzone-content">
+                <div class="dropzone-icon-circle">
+                  <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                </div>
+                <p class="dropzone-prompt">
+                  <strong>Click to browse</strong> or drag & drop leaf image here
+                </p>
+                <p class="dropzone-formats" id="file-requirements">
+                  Supported formats: <strong>JPEG, PNG, WEBP</strong> (Max file size: <strong>5 MB</strong>)
+                </p>
+              </div>
+            </div>
+
+            <!-- Selected File Information Bar -->
+            <div class="file-info-bar" id="file-info-bar" style="display: none;">
+              <div class="file-meta">
+                <div class="file-type-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                  </svg>
+                </div>
+                <div class="file-details">
+                  <span class="file-name" id="selected-filename">No file chosen</span>
+                  <span class="file-size" id="selected-filesize">0 KB</span>
+                </div>
+              </div>
+              <span class="status-tag status-valid" id="file-status-tag">Valid File</span>
+            </div>
+
+            <!-- Error Banner -->
+            <div class="error-banner" id="error-banner" role="alert" style="display: none;">
+              <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <div class="error-text" id="error-message">Invalid file. Please select a JPEG, PNG, or WEBP image under 5 MB.</div>
+            </div>
+
+            <!-- Quick Testing Samples -->
+            <div class="quick-samples">
+              <span class="quick-samples-label">Or test with a preloaded sample leaf:</span>
+              <div class="sample-buttons-row">
+                <button type="button" class="btn-sample" data-sample="tomato" title="Load Tomato Early Blight sample">
+                  🍅 <span>Tomato Blight</span>
+                </button>
+                <button type="button" class="btn-sample" data-sample="potato" title="Load Potato Late Blight sample">
+                  🥔 <span>Potato Blight</span>
+                </button>
+                <button type="button" class="btn-sample" data-sample="wheat" title="Load Wheat Leaf Rust sample">
+                  🌾 <span>Wheat Rust</span>
+                </button>
+                <button type="button" class="btn-sample" data-sample="cotton" title="Load Cotton Bacterial Blight sample">
+                  🌱 <span>Cotton Blight</span>
+                </button>
+                <button type="button" class="btn-sample" data-sample="corn" title="Load Corn Leaf Blight sample">
+                  🌽 <span>Corn Blight</span>
+                </button>
+                <button type="button" class="btn-sample" data-sample="healthy" title="Load Healthy Leaf sample">
+                  🌿 <span>Healthy Leaf</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="analyzer-buttons">
+              <button type="button" class="btn btn-primary btn-block" id="btn-analyze" disabled>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span>Explore Leaf Information</span>
+              </button>
+
+              <button type="button" class="btn btn-outline btn-block" id="btn-clear">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Clear Image</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Image Preview & Educational Result Panel -->
+          <div class="card-3d analyzer-preview-card">
+            <h3 class="card-heading">
+              <span class="step-num">2</span>
+              <span>Preview & Educational Insights</span>
+            </h3>
+
+            <!-- Image Preview Stage -->
+            <div class="preview-stage" id="preview-stage">
+              <!-- Empty State Display -->
+              <div class="preview-empty-state" id="empty-state">
+                <div class="empty-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <h4 class="empty-title">Ready to explore?</h4>
+                <p class="empty-desc">Upload a crop leaf image to inspect visual symptoms and access educational guidance.</p>
+              </div>
+
+              <!-- Active Preview Container -->
+              <div class="preview-active-wrap" id="active-preview-wrap" style="display: none;">
+                <img id="preview-img" src="" alt="Selected crop leaf image preview" class="preview-image">
+                
+                <!-- 3D Holographic Scanning Overlay HUD -->
+                <div class="scanner-hud" id="scanner-hud" aria-hidden="true">
+                  <div class="scan-line"></div>
+                  <div class="hud-corner top-left"></div>
+                  <div class="hud-corner top-right"></div>
+                  <div class="hud-corner bottom-left"></div>
+                  <div class="hud-corner bottom-right"></div>
+                  <div class="target-reticle">
+                    <div class="reticle-circle"></div>
+                    <div class="reticle-crosshair"></div>
+                  </div>
+                  <div class="hud-grid-overlay"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Result Panel -->
+            <div class="result-panel" id="result-panel" role="region" aria-label="Analysis Results">
+              <div class="result-header">
+                <span class="result-status-badge" id="result-status-badge">Awaiting Upload</span>
+                <span class="result-timestamp" id="result-timestamp">Client-side Inspection</span>
+              </div>
+
+              <h4 class="result-main-message" id="result-message">
+                Ready to explore? Upload a leaf image to get started.
+              </h4>
+
+              <!-- Educational Scope Notice -->
+              <div class="result-disclaimer" id="result-disclaimer">
+                <div class="disclaimer-header">
+                  <svg class="disclaimer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <strong>Educational Scope Notice:</strong>
+                </div>
+                <p class="disclaimer-text" id="disclaimer-text">
+                  This front-end prototype provides an educational guide and does not execute machine learning disease classification. Visual symptoms alone cannot confirm plant disease.
+                </p>
+              </div>
+
+              <!-- Comprehensive Crop Care & Treatment Section (Activated upon scan) -->
+              <div class="crop-care-container" id="crop-care-container" style="display: none;">
+                <div class="care-header">
+                  <div class="care-header-title-row">
+                    <div class="care-badge-icon">🌿</div>
+                    <div>
+                      <h4 class="care-heading">Crop Care & Recovery Plan</h4>
+                      <p class="care-subheading" id="care-crop-subtitle">Agronomist-recommended recovery actions, organic treatments, and watering guidelines.</p>
+                    </div>
+                  </div>
+
+                  <!-- Crop Switcher Bar -->
+                  <div class="crop-switch-wrapper">
+                    <span class="switch-label">Selected Crop:</span>
+                    <div class="crop-switch-buttons" role="group" aria-label="Select crop for care guide">
+                      <button type="button" class="btn-crop-switch active" data-crop="tomato">🍅 Tomato</button>
+                      <button type="button" class="btn-crop-switch" data-crop="potato">🥔 Potato</button>
+                      <button type="button" class="btn-crop-switch" data-crop="wheat">🌾 Wheat</button>
+                      <button type="button" class="btn-crop-switch" data-crop="cotton">🌱 Cotton</button>
+                      <button type="button" class="btn-crop-switch" data-crop="corn">🌽 Corn</button>
+                      <button type="button" class="btn-crop-switch" data-crop="general">🌿 General</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Care Navigation Tabs -->
+                <div class="care-tabs-nav" role="tablist">
+                  <button type="button" class="care-tab-btn active" data-tab="checklist" role="tab" aria-selected="true">
+                    📋 <span>Action Checklist</span>
+                  </button>
+                  <button type="button" class="care-tab-btn" data-tab="treatment" role="tab" aria-selected="false">
+                    💊 <span>Organic Treatments</span>
+                  </button>
+                  <button type="button" class="care-tab-btn" data-tab="watering" role="tab" aria-selected="false">
+                    💧 <span>Watering & Soil</span>
+                  </button>
+                  <button type="button" class="care-tab-btn" data-tab="prevention" role="tab" aria-selected="false">
+                    🛡️ <span>Prevention</span>
+                  </button>
+                </div>
+
+                <!-- Dynamic Tab Content Panels -->
+                <div class="care-tab-panels">
+                  <!-- Tab 1: Checklist -->
+                  <div class="care-panel active" id="panel-checklist" role="tabpanel">
+                    <div class="checklist-intro">
+                      <span class="checklist-hint">Check off these immediate recovery steps as you care for your crop:</span>
+                    </div>
+                    <ul class="interactive-checklist" id="care-checklist-items">
+                      <!-- Populated dynamically via JS -->
+                    </ul>
+                  </div>
+
+                  <!-- Tab 2: Treatment & Spray -->
+                  <div class="care-panel" id="panel-treatment" role="tabpanel" style="display: none;">
+                    <div class="treatment-content" id="care-treatment-content">
+                      <!-- Populated dynamically via JS -->
+                    </div>
+                  </div>
+
+                  <!-- Tab 3: Watering & Soil -->
+                  <div class="care-panel" id="panel-watering" role="tabpanel" style="display: none;">
+                    <div class="watering-content" id="care-watering-content">
+                      <!-- Populated dynamically via JS -->
+                    </div>
+                  </div>
+
+                  <!-- Tab 4: Prevention & Rotation -->
+                  <div class="care-panel" id="panel-prevention" role="tabpanel" style="display: none;">
+                    <div class="prevention-content" id="care-prevention-content">
+                      <!-- Populated dynamically via JS -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Care Action Buttons Bar -->
+                <div class="care-actions-bar">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-care">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>Copy Care Plan</span>
+                  </button>
+
+                  <a href="#guide" class="btn btn-outline btn-sm" id="btn-jump-guide">
+                    <span>Compare with Disease Library</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </a>
+                </div>
+
+                <!-- Copy Toast Notification -->
+                <div class="copy-toast" id="copy-toast" style="display: none;">
+                  ✅ Care Plan copied to clipboard!
+                </div>
+              </div>
+
+              <!-- ARIA Live Announcement Region -->
+              <div class="sr-only" aria-live="polite" id="accessible-announcement"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6.4 Crop Disease Guide Section (3 Detailed Cards + 3D Tilt)
+         ========================================================================= -->
+    <section class="section guide-section" id="guide">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="section-header text-center">
+          <div class="badge section-badge">Knowledge Base</div>
+          <h2 class="section-title">Educational Crop Disease Guide</h2>
+          <p class="section-subtitle">
+            Explore three common agricultural diseases. Understand key visual markers, symptom patterns, and sustainable agronomic prevention protocols.
+          </p>
+        </div>
+
+        <!-- Disease Cards Grid (3 Columns) -->
+        <div class="disease-cards-grid">
+          <!-- Card 1: Tomato Early Blight -->
+          <article class="card-3d disease-card" id="card-tomato" data-crop="tomato">
+            <div class="disease-card-inner">
+              <div class="disease-badge-row">
+                <span class="crop-tag tomato-tag">🍅 Tomato (Solanum lycopersicum)</span>
+                <span class="pathogen-tag">Fungal Disease</span>
+              </div>
+
+              <div class="disease-visual-header">
+                <div class="disease-visual-thumbnail">
+                  <img src="images/sample_tomato_early_blight.jpg" alt="Tomato leaf affected by early blight showing concentric ring lesions" class="disease-thumb-img">
+                  <div class="thumb-badge">Concentric Target Spots</div>
+                </div>
+              </div>
+
+              <h3 class="disease-title">Tomato Early Blight</h3>
+              <p class="disease-pathogen">Pathogen: <em>Alternaria solani</em></p>
+
+              <div class="disease-info-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>Possible Symptoms:</span>
+                </div>
+                <ul class="symptom-list">
+                  <li>Small brown to black spots developing primarily on older lower foliage.</li>
+                  <li>Enlarging circular lesions exhibiting distinctive concentric rings ("target board" pattern).</li>
+                  <li>Surrounding tissue often turns chlorotic (yellow halo) as spots coalesce.</li>
+                </ul>
+              </div>
+
+              <div class="disease-info-block prevention-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>General Prevention & Guidance:</span>
+                </div>
+                <p class="prevention-text">
+                  Reduce prolonged leaf wetness by using drip irrigation instead of overhead sprinklers. Maintain suitable plant spacing and staking to maximize airflow. Remove infected lower leaves and practice at least 2–3 year crop rotations with non-solanaceous crops.
+                </p>
+              </div>
+
+              <div class="disease-card-footer">
+                <span class="diagnostic-caution">⚠️ Visual observation alone cannot confirm diagnosis. Consult agricultural extension services.</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2: Potato Late Blight -->
+          <article class="card-3d disease-card" id="card-potato" data-crop="potato">
+            <div class="disease-card-inner">
+              <div class="disease-badge-row">
+                <span class="crop-tag potato-tag">🥔 Potato (Solanum tuberosum)</span>
+                <span class="pathogen-tag pathogen-oomycete">Oomycete Water Mold</span>
+              </div>
+
+              <div class="disease-visual-header">
+                <div class="disease-visual-thumbnail">
+                  <img src="images/sample_potato_late_blight.jpg" alt="Potato leaf affected by late blight showing dark water-soaked lesions" class="disease-thumb-img">
+                  <div class="thumb-badge">Water-Soaked Lesions</div>
+                </div>
+              </div>
+
+              <h3 class="disease-title">Potato Late Blight</h3>
+              <p class="disease-pathogen">Pathogen: <em>Phytophthora infestans</em></p>
+
+              <div class="disease-info-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>Possible Symptoms:</span>
+                </div>
+                <ul class="symptom-list">
+                  <li>Irregular, dark brown to purplish water-soaked-looking lesions on leaf tips or margins.</li>
+                  <li>Lesions expand rapidly under cool, moist weather, blighting whole leaflets within days.</li>
+                  <li>Under high humidity, a delicate white cottony fungal-like bloom appears under leaves.</li>
+                </ul>
+              </div>
+
+              <div class="disease-info-block prevention-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>General Prevention & Guidance:</span>
+                </div>
+                <p class="prevention-text">
+                  Monitor crops vigilantly during cool, damp weather. Plant certified disease-free seed tubers. Promptly destroy cull piles and volunteer potatoes that harbor inoculum. Seek rapid local agricultural advisory upon first regional blight forecast warnings.
+                </p>
+              </div>
+
+              <div class="disease-card-footer">
+                <span class="diagnostic-caution">⚠️ High-consequence pathogen. Immediate field inspection is advised if lesions are spotted.</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3: Wheat Leaf Rust -->
+          <article class="card-3d disease-card" id="card-wheat" data-crop="wheat">
+            <div class="disease-card-inner">
+              <div class="disease-badge-row">
+                <span class="crop-tag wheat-tag">🌾 Wheat (Triticum aestivum)</span>
+                <span class="pathogen-tag pathogen-rust">Basidiomycete Fungus</span>
+              </div>
+
+              <div class="disease-visual-header">
+                <div class="disease-visual-thumbnail">
+                  <img src="images/sample_wheat_leaf_rust.jpg" alt="Wheat leaf showing orange-brown powdery rust pustules" class="disease-thumb-img">
+                  <div class="thumb-badge">Orange Powdery Pustules</div>
+                </div>
+              </div>
+
+              <h3 class="disease-title">Wheat Leaf Rust</h3>
+              <p class="disease-pathogen">Pathogen: <em>Puccinia triticina</em></p>
+
+              <div class="disease-info-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>Possible Symptoms:</span>
+                </div>
+                <ul class="symptom-list">
+                  <li>Small, round-to-oval orange-brown powdery pustules (uredinia) scattered on upper leaf blades.</li>
+                  <li>Pustules rupture the leaf epidermis, releasing powdery spores that rub off easily.</li>
+                  <li>In severe attacks, premature leaf senescence and impaired grain filling occur.</li>
+                </ul>
+              </div>
+
+              <div class="disease-info-block prevention-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>General Prevention & Guidance:</span>
+                </div>
+                <p class="prevention-text">
+                  Plant locally recommended rust-resistant wheat varieties (with slow-rusting or adult-plant resistance genes). Eliminate volunteer green-bridge wheat plants before sowing. Follow regional crop surveillance alerts and university extension recommendations.
+                </p>
+              </div>
+
+              <div class="disease-card-footer">
+                <span class="diagnostic-caution">⚠️ Wind-borne spores can travel long distances. Always follow local agricultural advisories.</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 4: Cotton Bacterial Blight / Angular Leaf Spot -->
+          <article class="card-3d disease-card" id="card-cotton" data-crop="cotton">
+            <div class="disease-card-inner">
+              <div class="disease-badge-row">
+                <span class="crop-tag cotton-tag">🌱 Cotton (Gossypium hirsutum)</span>
+                <span class="pathogen-tag pathogen-bacterial">Bacterial Pathogen</span>
+              </div>
+
+              <div class="disease-visual-header">
+                <div class="disease-visual-thumbnail">
+                  <img src="images/sample_cotton_bacterial_blight.jpg" alt="Cotton leaf showing angular water-soaked lesions bound by veins" class="disease-thumb-img">
+                  <div class="thumb-badge">Angular Vein-Bound Spots</div>
+                </div>
+              </div>
+
+              <h3 class="disease-title">Cotton Bacterial Blight</h3>
+              <p class="disease-pathogen">Pathogen: <em>Xanthomonas citri pv. malvacearum</em></p>
+
+              <div class="disease-info-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>Possible Symptoms:</span>
+                </div>
+                <ul class="symptom-list">
+                  <li>Small, water-soaked, angular lesions sharply delimited and bounded by minor leaf veins.</li>
+                  <li>Lesions turn dark reddish-brown to purple-black with greasy margins on leaf undersides.</li>
+                  <li>Can progress systemically along petioles and main stems to cause dark "blackarm" cankers.</li>
+                </ul>
+              </div>
+
+              <div class="disease-info-block prevention-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>General Prevention & Guidance:</span>
+                </div>
+                <p class="prevention-text">
+                  Sow certified acid-delinted seeds to destroy seed-borne bacteria. Choose resistant cotton hybrids with proven genetic resistance. Plow under crop residue immediately following harvest and avoid overhead sprinkler irrigation that facilitates bacterial splashing.
+                </p>
+              </div>
+
+              <div class="disease-card-footer">
+                <span class="diagnostic-caution">⚠️ Seed-transmitted bacterial pathogen. Field hygiene and certified seed selection are primary defenses.</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 5: Northern Corn Leaf Blight (NCLB) -->
+          <article class="card-3d disease-card" id="card-corn" data-crop="corn">
+            <div class="disease-card-inner">
+              <div class="disease-badge-row">
+                <span class="crop-tag corn-tag">🌽 Corn / Maize (Zea mays)</span>
+                <span class="pathogen-tag pathogen-blight">Fungal Foliar Blight</span>
+              </div>
+
+              <div class="disease-visual-header">
+                <div class="disease-visual-thumbnail">
+                  <img src="images/sample_corn_leaf_blight.jpg" alt="Corn leaf showing long elliptical cigar-shaped tan lesions" class="disease-thumb-img">
+                  <div class="thumb-badge">Cigar-Shaped Lesions</div>
+                </div>
+              </div>
+
+              <h3 class="disease-title">Northern Corn Leaf Blight</h3>
+              <p class="disease-pathogen">Pathogen: <em>Exserohilum turcicum</em></p>
+
+              <div class="disease-info-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>Possible Symptoms:</span>
+                </div>
+                <ul class="symptom-list">
+                  <li>Distinctive long, elliptical, "cigar-shaped" lesions (1 to 6 inches long) parallel to leaf margins.</li>
+                  <li>Initially grayish-green and water-soaked, expanding and drying to a tan, straw-colored necrotic center.</li>
+                  <li>In humid mornings, dense olive-gray dusty fungal spores form in the lesion centers.</li>
+                </ul>
+              </div>
+
+              <div class="disease-info-block prevention-block">
+                <div class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>General Prevention & Guidance:</span>
+                </div>
+                <p class="prevention-text">
+                  Plant resistant corn hybrids equipped with Ht resistance genes and quantitative background tolerance. Rotate with non-host crops (such as soybeans, cotton, or legumes) for 1–2 seasons. Manage corn residue to accelerate fungal decomposition and scout fields regularly.
+                </p>
+              </div>
+
+              <div class="disease-card-footer">
+                <span class="diagnostic-caution">⚠️ Can cause severe yield loss if lesions develop on the ear leaf before or during pollination.</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Agricultural Guidance Note -->
+        <div class="guidance-callout-card">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <h4>Best Practices for Crop Health Management</h4>
+            <p>
+              Early intervention is crucial. Always examine the entire plant canopy, soil moisture balance, and weather history. For conclusive diagnosis, submit physical tissue specimens to your accredited state or university plant pathology diagnostic laboratory.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6.5 About Project Section
+         ========================================================================= -->
+    <section class="section about-section" id="about">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="section-header text-center">
+          <div class="badge section-badge">Academic Context</div>
+          <h2 class="section-title">About CropCare AI</h2>
+          <p class="section-subtitle">
+            An engineering college project and personal portfolio deliverable demonstrating modern front-end web engineering, browser image manipulation, and 3D visual computing.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <!-- About Card 1: Purpose & Target Audience -->
+          <div class="card-3d about-card">
+            <div class="about-icon-box">🎯</div>
+            <h3 class="about-card-title">Project Purpose & Audience</h3>
+            <p class="about-card-text">
+              CropCare AI was engineered to bridge accessible web technologies and agricultural awareness. It provides an intuitive platform where farmers, agricultural students, gardening hobbyists, and developers can explore crop pathology safely in their browser.
+            </p>
+            <ul class="about-list">
+              <li><strong>Target Users:</strong> Smallholder farmers, agronomy students, kitchen gardeners, and software engineering reviewers.</li>
+              <li><strong>Educational Value:</strong> Teaches accurate symptom identification and non-chemical cultural control strategies.</li>
+            </ul>
+          </div>
+
+          <!-- About Card 2: Technology Stack -->
+          <div class="card-3d about-card">
+            <div class="about-icon-box">💻</div>
+            <h3 class="about-card-title">Technology Stack & Architecture</h3>
+            <p class="about-card-text">
+              The application is implemented as an ultra-fast, zero-dependency static web application, engineered for accessibility and mobile responsiveness:
+            </p>
+            <div class="tech-pills">
+              <span class="tech-pill"><strong>HTML5:</strong> Semantic Page Structure</span>
+              <span class="tech-pill"><strong>CSS3:</strong> Custom Variables, Grid, 3D Transforms</span>
+              <span class="tech-pill"><strong>Vanilla JS:</strong> File Validation & DOM State</span>
+              <span class="tech-pill"><strong>Three.js:</strong> 3D WebGL Bio-Model & Shaders</span>
+            </div>
+            <p class="about-card-text privacy-note">
+              🔒 <strong>100% Client-Side Privacy:</strong> Selected images are processed entirely within browser memory and are never uploaded to any remote server.
+            </p>
+          </div>
+
+          <!-- About Card 3: Honest Limitations -->
+          <div class="card-3d about-card">
+            <div class="about-icon-box">🛡️</div>
+            <h3 class="about-card-title">Prototype Limitations (Version 1.0)</h3>
+            <p class="about-card-text">
+              Honesty and academic integrity are core principles of this project. CropCare AI Version 1.0 does <strong>not</strong> claim artificial intelligence inference capabilities:
+            </p>
+            <ul class="about-list">
+              <li>No external AI model or cloud inference endpoint is executed in Version 1.0.</li>
+              <li>No fabricated disease predictions or misleading percentage scores are generated.</li>
+              <li>The analyzer workflow prepares users for future machine learning integration while delivering educational guides.</li>
+            </ul>
+          </div>
+
+          <!-- About Card 4: Future Machine Learning Roadmap -->
+          <div class="card-3d about-card">
+            <div class="about-icon-box">🚀</div>
+            <h3 class="about-card-title">Future Version 2.0 Roadmap</h3>
+            <p class="about-card-text">
+              Subsequent development phases will incorporate real deep learning inference and field assistance tools:
+            </p>
+            <ul class="about-list">
+              <li><strong>CNN Model Integration:</strong> Lightweight MobileNetV3 / ResNet architecture trained on validated agricultural datasets.</li>
+              <li><strong>Python / FastAPI Backend:</strong> Secure RESTful API for inference and uncertainty scoring.</li>
+              <li><strong>Regional Languages:</strong> Native support for Hindi and Marathi for rural accessibility.</li>
+              <li><strong>Offline PWA:</strong> Progressive Web App caching for remote field operation.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       6.6 Footer
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <div class="footer-brand">
+            <svg class="footer-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="20" cy="20" r="18" fill="#52b788" opacity="0.2" />
+              <path d="M20 6C14 13 10 20 12 28C14 36 24 35 28 29C32 23 29 14 20 6Z" fill="#74c69d" />
+              <path d="M19 12V32M19 18L25 14M19 23L14 20" stroke="#1b4332" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="footer-brand-text">CropCare <span class="footer-brand-accent">AI</span></span>
+          </div>
+          <p class="footer-tagline">
+            Smart Crop Disease Helper Website. An educational front-end engineering project empowering plant health awareness through modern web design and 3D visualization.
+          </p>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Quick Navigation</h4>
+          <ul class="footer-nav">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#analyzer">Leaf Analyzer</a></li>
+            <li><a href="#guide">Disease Guide</a></li>
+            <li><a href="#about">About Project</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-info-col">
+          <h4 class="footer-heading">Academic Information</h4>
+          <p class="footer-info-text">
+            <strong>Project:</strong> Front-End Web Development<br>
+            <strong>Version:</strong> 1.0 (Prototype)<br>
+            <strong>Stack:</strong> HTML5, CSS3, JavaScript, WebGL (Three.js)<br>
+            <strong>Status:</strong> Portfolio & Academic Submission
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright-text">
+          &copy; <span id="current-year">2026</span> CropCare AI. Developed for college project and personal portfolio. All rights reserved.
+        </p>
+        <p class="disclaimer-note">
+          Disclaimer: Informational and educational prototype only. Not a certified agricultural diagnostic instrument.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
